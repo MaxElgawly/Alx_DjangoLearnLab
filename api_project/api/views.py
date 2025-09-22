@@ -6,13 +6,13 @@ class BookList(generics.ListAPIView):
     queryset = Book.objects.all()
     serializer_class = BookSerializer
 
-router = DefaultRouter()
-router.register(r'books_all', BookViewSet, basename='book_all')
+# Existing BookList view can stay for just listing if needed
+# class BookList(...)
 
-urlpatterns = [
-    # Existing ListAPIView endpoint
-    path('books/', BookList.as_view(), name='book-list'),
+class BookViewSet(viewsets.ModelViewSet):
+    """
+    A viewset that provides the standard CRUD actions for the Book model.
+    """
+    queryset = Book.objects.all()
+    serializer_class = BookSerializer
 
-    # Include all router URLs for the viewset
-    path('', include(router.urls)),
-]
