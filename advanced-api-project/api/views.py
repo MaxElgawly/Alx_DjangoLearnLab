@@ -4,7 +4,7 @@ from .models import Book
 from .serializers import BookSerializer
 from rest_framework.permissions import IsAuthenticatedOrReadOnly, IsAuthenticated
 from django_filters.rest_framework import DjangoFilterBackend
-
+from django_filters import rest_framework
 # --------------------------
 # List all books (Read-only)
 # --------------------------
@@ -103,6 +103,7 @@ class BookListView(generics.ListAPIView):
     # Fields you can order by using ?ordering=title or ?ordering=-publication_year
     ordering_fields = ['title', 'publication_year']
     ordering = ['title']  # default ordering
+
 
 
 
