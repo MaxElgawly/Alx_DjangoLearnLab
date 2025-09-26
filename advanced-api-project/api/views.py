@@ -2,7 +2,7 @@ from django.shortcuts import render
 from rest_framework import generics, permissions
 from .models import Book
 from .serializers import BookSerializer
-
+from rest_framework.permissions import IsAuthenticatedOrReadOnly
 # --------------------------
 # List all books (Read-only)
 # --------------------------
@@ -80,4 +80,5 @@ class BookDeleteView(generics.DestroyAPIView):
     serializer_class = BookSerializer
     permission_classes = [permissions.IsAuthenticated]
 # Create your views here.
+
 
