@@ -7,18 +7,17 @@ from .models import CustomUser
 from .serializers import RegisterSerializer, LoginSerializer, UserSerializer
 
 class RegisterView(generics.CreateAPIView):
+    queryset = CustomUser.objects.all() 
     serializer_class = RegisterSerializer
+    permission_classes = [permissions.AllowAny]
 
-    def create(self, request, *args, **kwargs):
-        serializer = self.get_serializer(data=request.data)
-        serializer.is_valid(raise_exception=True)
-        user = serializer.save()
-        token, created = Token.objects.get_or_create(user=user)
-        return Response({
-            "user": UserSerializer(user).data,
-            "token": token.key
-        }, status=status.HTTP_201_CREATED)
+class ProfileView(generics.RetrieveUpdateAPIView):
+    queryset = CustomUser.objects.all()   
+    serializer_class = UserSerializer
+    permission_classes = [permissions.IsAuthenticated]
 
+    def get_object(self):
+        return self.request.user
 class LoginView(generics.GenericAPIView):
     serializer_class = LoginSerializer
 
@@ -32,9 +31,6 @@ class LoginView(generics.GenericAPIView):
             "token": token.key
         })
 
-class ProfileView(generics.RetrieveUpdateAPIView):
-    serializer_class = UserSerializer
-    permission_classes = [IsAuthenticated]
 
     def get_object(self):
         return self.request.user
@@ -58,3 +54,4 @@ def unfollow_user(request, user_id):
         return Response({"detail": "Cannot unfollow yourself."}, status=status.HTTP_400_BAD_REQUEST)
     request.user.following.remove(target)
     return Response({"detail": f"You have unfollowed {target.username}."}, status=status.HTTP_200_OK)
+
