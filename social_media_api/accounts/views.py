@@ -38,3 +38,23 @@ class ProfileView(generics.RetrieveUpdateAPIView):
 
     def get_object(self):
         return self.request.user
+
+User = get_user_model()
+
+@api_view(['POST'])
+@permission_classes([permissions.IsAuthenticated])
+def follow_user(request, user_id):
+    target = get_object_or_404(User, id=user_id)
+    if target == request.user:
+        return Response({"detail": "Cannot follow yourself."}, status=status.HTTP_400_BAD_REQUEST)
+    request.user.following.add(target)
+    return Response({"detail": f"You are now following {target.username}."}, status=status.HTTP_200_OK)
+
+@api_view(['POST'])
+@permission_classes([permissions.IsAuthenticated])
+def unfollow_user(request, user_id):
+    target = get_object_or_404(User, id=user_id)
+    if target == request.user:
+        return Response({"detail": "Cannot unfollow yourself."}, status=status.HTTP_400_BAD_REQUEST)
+    request.user.following.remove(target)
+    return Response({"detail": f"You have unfollowed {target.username}."}, status=status.HTTP_200_OK)
