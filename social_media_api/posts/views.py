@@ -2,9 +2,13 @@ from rest_framework import viewsets, filters
 from rest_framework.permissions import IsAuthenticatedOrReadOnly
 from rest_framework.pagination import PageNumberPagination
 from django_filters.rest_framework import DjangoFilterBackend
-from .models import Post, Comment
-from .serializers import PostListSerializer, PostDetailSerializer, CommentSerializer
+from .models import Post, Comment, Like
+from .serializers import PostListSerializer, PostDetailSerializer, CommentSerializer, LikeSerializer
 from .permissions import IsOwnerOrReadOnly
+from rest_framework.decorators import action
+from rest_framework.response import Response
+from rest_framework import status
+from notifications.utils import create_notification  # (we’ll make this next)
 
 
 class StandardResultsSetPagination(PageNumberPagination):
@@ -44,4 +48,5 @@ class CommentViewSet(viewsets.ModelViewSet):
 
     def perform_create(self, serializer):
         serializer.save(author=self.request.user)
+
 
