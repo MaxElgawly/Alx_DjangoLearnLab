@@ -34,6 +34,30 @@ class PostViewSet(viewsets.ModelViewSet):
 
     def perform_create(self, serializer):
         serializer.save(author=self.request.user)
+        
+     @action(detail=True, methods=['post'], permission_classes=[IsAuthenticatedOrReadOnly])
+    def like(self, request, pk=None):
+        post = self.get_object()
+        user = request.user
+        if Like.objects.filter(user=user, post=post).exists():
+            return Response({'detail': 'You already liked this post.'}, status=status.HTTP_400_BAD_REQUEST)
+        Like.objects.create(user=user, post=post)
+
+        # ✅ Create a notification for the post author
+        if post.author != user:
+            create_notification(actor=user, recipient=post.author, verb='liked your post', target=post)
+
+        return Response({'detail': 'Post liked successfully.'}, status=status.HTTP_201_CREATED)
+
+    @action(detail=True, methods=['post'], permission_classes=[IsAuthenticatedOrReadOnly])
+    def unlike(self, request, pk=None):
+        post = self.get_object()
+        user = request.user
+        like = Like.objects.filter(user=user, post=post).first()
+        if not like:
+            return Response({'detail': 'You haven’t liked this post yet.'}, status=status.HTTP_400_BAD_REQUEST)
+        like.delete()
+        return Response({'detail': 'Post unliked successfully.'}, status=status.HTTP_200_OK)
 
 
 class CommentViewSet(viewsets.ModelViewSet):
@@ -48,5 +72,6 @@ class CommentViewSet(viewsets.ModelViewSet):
 
     def perform_create(self, serializer):
         serializer.save(author=self.request.user)
+
 
 
