@@ -14,7 +14,7 @@ def books_in_library(library_name):
 
 # --- Query 3: Retrieve the librarian for a specific library ---
 def librarian_for_library(library_name):
-    library = Library.objects.get(name=library_name)
+    library = Librarian.objects.get(name=library_name)
     return library.librarian
 
 
@@ -33,3 +33,4 @@ if __name__ == "__main__":
     print("Books by George Orwell:", [b.title for b in books_by_author("George Orwell")])
     print("Books in Central Library:", [b.title for b in books_in_library("Central Library")])
     print("Librarian for Central Library:", librarian_for_library("Central Library").name)
+
