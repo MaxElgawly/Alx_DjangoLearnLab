@@ -1,16 +1,17 @@
 from django.shortcuts import render
 from django.views.generic import DetailView
-from .models import Author, Book, Librarian, Library
+from .models import Book, Library
 
-def list_all_books(request):
-    books = Book.objects.all()
-    return render(request, 'templates/list_book.html', {'books':books})
 
+# Function-Based View — lists all books
+def list_books(request):
+    books = Book.objects.select_related('author').all()
+    # ✅ Use app-qualified template path
+    return render(request, 'relationship_app/list_books.html', {'books': books})
+
+
+# Class-Based View — details for a specific library
 class LibraryDetailView(DetailView):
     model = Library
-    template_name = 'templates/library_detail.html'
+    template_name = 'relationship_app/library_detail.html'  # ✅ Also use app-qualified path
     context_object_name = 'library'
-    
-    def get_queryset(self):
-        return super().get_queryset()()
-
