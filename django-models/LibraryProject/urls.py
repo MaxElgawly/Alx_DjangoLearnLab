@@ -22,3 +22,4 @@ urlpatterns = [
     path('', include('relationship_app.urls')),  # include app routes
 ]
 
+
