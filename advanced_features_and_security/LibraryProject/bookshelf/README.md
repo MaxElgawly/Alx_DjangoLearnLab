@@ -1,17 +1,19 @@
-# Permissions and Groups Setup
+# Django Security Enhancements
 
-## Custom Permissions
-Defined in `Book` model:
-- can_view
-- can_create
-- can_edit
-- can_delete
+## Configurations
+- `DEBUG = False`
+- Added secure cookie settings (`CSRF_COOKIE_SECURE`, `SESSION_COOKIE_SECURE`)
+- Configured `SECURE_BROWSER_XSS_FILTER`, `SECURE_CONTENT_TYPE_NOSNIFF`, and `X_FRAME_OPTIONS`
+- Added `django-csp` for Content Security Policy
 
-## Groups
-Created in admin or via `python manage.py setup_groups`:
-- Viewers: can_view
-- Editors: can_view, can_create, can_edit
-- Admins: all permissions
+## CSRF Protection
+- All forms include `{% csrf_token %}`.
+- Django's CSRF middleware is active.
 
-## Enforcement
-Each view in `bookshelf/views.py` uses `@permission_required` to enforce permissions.
+## Safe Data Handling
+- All database access uses Django ORM (no raw SQL).
+- Inputs validated with Django forms.
+
+## Testing
+- Tested CSRF protection by removing `{% csrf_token %}` → verified 403 Forbidden.
+- Verified HTTPS-only cookies and CSP headers in browser dev tools.
