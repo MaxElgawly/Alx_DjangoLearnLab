@@ -1,12 +1,15 @@
 from django import forms
 from .models import Book
 
-class BookForm(forms.ModelForm):
+class ExampleForm(forms.ModelForm):
+    """
+    ExampleForm is used to securely handle Book data input.
+    Includes validation to prevent malicious input (e.g., SQL injection or XSS).
+    """
     class Meta:
         model = Book
         fields = ['title', 'author', 'description']
 
-    # Extra validation example
     def clean_title(self):
         title = self.cleaned_data.get('title')
         if any(char in title for char in [';', '--', "'"]):
